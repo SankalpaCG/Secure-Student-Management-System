@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+coverage/
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Test / security artifacts
+reports/
+zap-report/
+.trivy/
+.scannerwork/
+
+# Sonar
+sonar-project.properties.local
