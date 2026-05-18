@@ -1,0 +1,16 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Attendance{% endblock %}
+{% block page_actions %}<a href="{{ url_for('teacher.mark_attendance') }}" class="btn btn-primary">Mark Attendance</a>{% endblock %}
+{% block dashboard_content %}
+{% if pending %}<div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-2"></i>{{ pending }} student(s) need attendance marked for today.</div>{% endif %}
+<div class="row g-3 mb-3">
+<div class="col-md-6"><a href="{{ url_for('teacher.mark_attendance') }}" class="card card-app text-decoration-none h-100"><div class="card-body"><h5 class="fw-semibold">Mark Attendance</h5><p class="text-muted mb-0">Record daily attendance by course</p></div></a></div>
+<div class="col-md-6"><a href="{{ url_for('teacher.attendance_history') }}" class="card card-app text-decoration-none h-100"><div class="card-body"><h5 class="fw-semibold">Attendance History</h5><p class="text-muted mb-0">View and filter past records</p></div></a></div>
+</div>
+<div class="card card-app"><div class="card-header">Quick links by course</div><ul class="list-group list-group-flush">
+{% for c in courses %}<li class="list-group-item d-flex justify-content-between align-items-center">
+<span>{{ c.course_code }} — {{ c.course_name }}</span>
+<a href="{{ url_for('teacher.mark_attendance', course_id=c.id) }}" class="btn btn-sm btn-outline-primary">Mark</a>
+</li>{% else %}<li class="list-group-item text-muted">No courses</li>{% endfor %}
+</ul></div>
+{% endblock %}

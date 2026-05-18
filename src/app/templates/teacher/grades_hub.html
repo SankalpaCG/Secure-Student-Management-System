@@ -1,0 +1,11 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Manage Grades{% endblock %}
+{% block page_actions %}<a href="{{ url_for('teacher.add_grade') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Grade</a>{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">{% for c in courses %}
+<div class="col-md-6 col-lg-4"><div class="card card-app h-100"><div class="card-body">
+<h5 class="fw-semibold">{{ c.course_code }}</h5><p class="text-muted">{{ c.course_name }}</p>
+<a href="{{ url_for('teacher.add_grade', course_id=c.id) }}" class="btn btn-sm btn-primary me-1">Add Grade</a>
+<a href="{{ url_for('teacher.course_students', course_id=c.id) }}" class="btn btn-sm btn-outline-secondary">Students</a>
+</div></div></div>{% else %}<div class="col-12"><div class="alert alert-info">No courses assigned.</div></div>{% endfor %}</div>
+{% endblock %}
