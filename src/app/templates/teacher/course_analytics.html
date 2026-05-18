@@ -1,0 +1,21 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ course.course_code }} — Analytics{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card card-app"><div class="card-body text-center"><div class="text-muted small">Students</div><div class="fs-3 fw-bold">{{ student_count }}</div></div></div></div>
+  <div class="col-md-4"><div class="card card-app"><div class="card-body text-center"><div class="text-muted small">Grades Recorded</div><div class="fs-3 fw-bold">{{ grade_count }}</div></div></div>
+  <div class="col-md-4"><div class="card card-app"><div class="card-body text-center"><div class="text-muted small">Course Attendance</div><div class="fs-3 fw-bold">{{ course_attendance_pct }}%</div></div></div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-lg-6"><div class="card card-app h-100"><div class="card-header">Grade Histogram</div><div class="card-body"><canvas id="histChart" height="220"></canvas></div></div></div>
+  <div class="col-lg-3"><div class="card card-app h-100"><div class="card-header">Top Performers</div><ul class="list-group list-group-flush">
+  {% for p in top_performers %}<li class="list-group-item d-flex justify-content-between"><span>{{ p.name }}</span><span class="fw-semibold">{{ p.avg or '—' }}</span></li>
+  {% else %}<li class="list-group-item text-muted">No data</li>{% endfor %}</ul></div>
+  <div class="col-lg-3"><div class="card card-app h-100"><div class="card-header text-danger">At-Risk Students</div><ul class="list-group list-group-flush">
+  {% for p in at_risk %}<li class="list-group-item d-flex justify-content-between"><span>{{ p.name }}</span><span>{{ p.avg or '—' }} / {{ p.attendance or '—' }}%</span></li>
+  {% else %}<li class="list-group-item text-muted">None identified</li>{% endfor %}</ul></div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>
+new Chart(document.getElementById('histChart'),{type:'bar',data:{labels:{{ histogram_labels|tojson }},datasets:[{data:{{ histogram_values|tojson }},backgroundColor:'#6366f1'}]}},options:{responsive:true,plugins:{legend:{display:false}}}});
+</script>{% endblock %}

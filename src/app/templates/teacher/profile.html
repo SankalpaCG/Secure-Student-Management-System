@@ -1,0 +1,14 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}My Profile{% endblock %}
+{% block dashboard_content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="card card-app"><div class="card-body">
+<form method="post">{{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.full_name.label(class='form-label') }}{{ form.full_name(class='form-control') }}</div>
+  <div class="mb-3"><label class="form-label">Email</label><input class="form-control" value="{{ current_user.email }}" readonly disabled></div>
+  <div class="mb-3"><label class="form-label">Staff Number</label><input class="form-control" value="{{ profile.staff_number if profile else '—' }}" readonly disabled></div>
+  <div class="mb-3">{{ form.department.label(class='form-label') }}{{ form.department(class='form-control') }}</div>
+  <div class="mb-3">{{ form.phone.label(class='form-label') }}{{ form.phone(class='form-control') }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+</form></div></div></div></div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Add Grade{% endblock %}
+{% block dashboard_content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+<div class="card card-app"><div class="card-body">
+<form method="get" class="mb-4 pb-3 border-bottom">
+  <label class="form-label">Course</label>
+  <select name="course_id" class="form-select" onchange="this.form.submit()">
+    {% for val, label in form.course_id.choices %}
+    <option value="{{ val }}" {% if form.course_id.data == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</form>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <input type="hidden" name="course_id" value="{{ form.course_id.data }}">
+  <div class="mb-3">{{ form.student_id.label(class='form-label') }}{{ form.student_id(class='form-select') }}</div>
+  <div class="mb-3">{{ form.assessment_name.label(class='form-label') }}{{ form.assessment_name(class='form-control') }}</div>
+  <div class="mb-3">{{ form.grade_value.label(class='form-label') }}{{ form.grade_value(class='form-control', step='0.1', min='0', max='100') }}</div>
+  <div class="mb-3">{{ form.feedback.label(class='form-label') }}{{ form.feedback(class='form-control', rows=3) }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+  <a href="{{ url_for('teacher.grades_hub') }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+</div></div></div></div>
+{% endblock %}
