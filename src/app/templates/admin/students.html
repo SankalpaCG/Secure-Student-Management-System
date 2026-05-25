@@ -1,0 +1,35 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Students{% endblock %}
+{% block page_title %}Student Directory{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="get" class="row g-2 align-items-end">
+  <div class="col-md-4"><label class="form-label small">Search</label><input name="search" class="form-control" value="{{ search }}" placeholder="Name, email, number"></div>
+  <div class="col-md-3"><label class="form-label small">Status</label><select name="status" class="form-select"><option value="">All</option><option value="active" {% if status=='active' %}selected{% endif %}>Active</option><option value="inactive" {% if status=='inactive' %}selected{% endif %}>Inactive</option></select></div>
+  <div class="col-md-3"><label class="form-label small">Course</label><select name="course_id" class="form-select"><option value="">All</option>{% for c in courses %}<option value="{{ c.id }}" {% if course_id==c.id %}selected{% endif %}>{{ c.course_code }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+</form></div></div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app table-hover mb-0">
+<thead><tr><th>Student #</th><th>Name</th><th>Email</th><th>Courses</th><th>Attendance</th><th>Status</th><th></th></tr></thead>
+<tbody>
+{% for row in students %}{% set p = row.profile %}{% set u = p.user %}
+<tr>
+  <td>{{ p.student_number }}</td>
+  <td><a href="{{ url_for('admin.student_profile', user_id=u.id) }}">{{ u.full_name }}</a></td>
+  <td>{{ u.email }}</td>
+  <td>{{ row.course_count }}</td>
+  <td>{% if row.attendance_pct is not none %}{{ row.attendance_pct }}%{% else %}—{% endif %}</td>
+  <td>{% if u.is_active %}<span class="badge badge-status-active">Active</span>{% else %}<span class="badge badge-status-inactive">Inactive</span>{% endif %}</td>
+  <td class="text-end text-nowrap">
+    <a href="{{ url_for('admin.student_profile', user_id=u.id) }}" class="btn btn-sm btn-outline-secondary">Profile</a>
+    <a href="{{ url_for('admin.student_grades', user_id=u.id) }}" class="btn btn-sm btn-outline-primary">Grades</a>
+    <a href="{{ url_for('admin.student_attendance', user_id=u.id) }}" class="btn btn-sm btn-outline-primary">Attendance</a>
+    <a href="{{ url_for('admin.student_enrollments', user_id=u.id) }}" class="btn btn-sm btn-outline-primary">Enrollments</a>
+  </td>
+</tr>
+{% else %}<tr><td colspan="7" class="text-center text-muted py-4">No students found</td></tr>{% endfor %}
+</tbody></table>
+{% include 'admin/partials/pagination.html' %}
+</div></div>
+{% endblock %}

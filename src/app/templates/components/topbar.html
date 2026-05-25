@@ -1,0 +1,26 @@
+<header class="app-topbar">
+    <button class="topbar-toggle d-lg-none" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+        <i class="bi bi-list"></i>
+    </button>
+    <div class="breadcrumb-area">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                {% block breadcrumbs %}
+                <li class="breadcrumb-item"><a href="{{ url_for(dashboard_endpoint) }}">Home</a></li>
+                {% if breadcrumb_title %}
+                <li class="breadcrumb-item active" aria-current="page">{{ breadcrumb_title }}</li>
+                {% endif %}
+                {% endblock %}
+            </ol>
+        </nav>
+    </div>
+    <div class="topbar-user">
+        <div class="d-none d-md-block text-end">
+            <div class="small fw-semibold">{{ current_user.full_name }}</div>
+            <div class="small text-muted">{{ current_user.email }}</div>
+        </div>
+        <div class="topbar-avatar" title="{{ current_user.full_name }}">
+            {{ current_user.full_name[:1] | upper }}
+        </div>
+    </div>
+</header>

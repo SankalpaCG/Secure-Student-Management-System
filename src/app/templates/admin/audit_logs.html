@@ -1,0 +1,41 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Audit Logs{% endblock %}
+{% block page_actions %}<a href="{{ url_for('admin.export_audit_logs', **request.args) }}" class="btn btn-outline-secondary"><i class="bi bi-download me-1"></i>Export CSV</a>{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="get" class="row g-2 align-items-end">
+  <div class="col-md-2">{{ filter_form.search.label(class='form-label small') }}{{ filter_form.search(class='form-control form-control-sm', placeholder='Search') }}</div>
+  <div class="col-md-2">{{ filter_form.action.label(class='form-label small') }}{{ filter_form.action(class='form-control form-control-sm', placeholder='LOGIN_SUCCESS') }}</div>
+  <div class="col-md-2">{{ filter_form.severity.label(class='form-label small') }}{{ filter_form.severity(class='form-select form-select-sm') }}</div>
+  <div class="col-md-2">{{ filter_form.user_id.label(class='form-label small') }}{{ filter_form.user_id(class='form-select form-select-sm') }}</div>
+  <div class="col-md-2">{{ filter_form.date_from.label(class='form-label small') }}{{ filter_form.date_from(class='form-control form-control-sm', type='date') }}</div>
+  <div class="col-md-2">{{ filter_form.date_to.label(class='form-label small') }}{{ filter_form.date_to(class='form-control form-control-sm', type='date') }}</div>
+  <div class="col-12"><button class="btn btn-primary btn-sm">Apply Filters</button>
+  <a href="{{ url_for('admin.audit_logs') }}" class="btn btn-outline-secondary btn-sm">Reset</a></div>
+</form></div></div>
+<div class="card card-app"><div class="card-body p-0">
+<div class="table-responsive">
+<table class="table table-app table-sm table-hover mb-0">
+<thead><tr>
+  <th>Time</th><th>User</th><th>Action</th><th>Severity</th><th>Target</th><th>IP</th><th>Details</th>
+</tr></thead>
+<tbody>
+{% for log in logs %}
+<tr>
+  <td class="text-nowrap small">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+  <td class="small">{{ log.user.email if log.user else 'System' }}</td>
+  <td><code class="small">{{ log.action }}</code></td>
+  <td><span class="badge bg-{{ log.severity|severity_badge }}">{{ log.severity }}</span></td>
+  <td class="small">{{ log.target_type or '—' }}{% if log.target_id %} #{{ log.target_id }}{% endif %}</td>
+  <td class="small">{{ log.ip_address or '—' }}</td>
+  <td class="small text-truncate" style="max-width:200px" title="{{ log.details or '' }}">{{ log.details or '—' }}</td>
+</tr>
+{% else %}
+<tr><td colspan="7" class="text-center py-4 text-muted">No audit logs match your filters</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% include 'admin/partials/pagination.html' %}
+</div></div>
+{% endblock %}

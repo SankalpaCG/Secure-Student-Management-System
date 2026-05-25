@@ -1,0 +1,16 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Grades Management{% endblock %}
+{% block page_subtitle %}<p class="page-subtitle">Read-only administrative view</p>{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="get" class="row g-2">{{ filter_form.course_id(class='form-select col-md-3') }}{{ filter_form.teacher_id(class='form-select col-md-3') }}{{ filter_form.student_id(class='form-select col-md-3') }}{{ filter_form.search(class='form-control col-md-2', placeholder='Search') }}<div class="col-md-1"><button class="btn btn-primary w-100">Go</button></div></form>
+</div></div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Student</th><th>Course</th><th>Teacher</th><th>Assessment</th><th>Grade</th><th>Updated</th></tr></thead>
+<tbody>{% for g in grades %}<tr>
+<td>{{ g.student.full_name }}</td><td>{{ g.course.course_code }}</td><td>{{ g.teacher.full_name }}</td>
+<td>{{ g.assessment_name }}</td><td>{{ g.grade_value }}</td><td>{{ g.updated_at.strftime('%Y-%m-%d') if g.updated_at else '—' }}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center py-4 text-muted">No grades</td></tr>{% endfor %}</tbody></table>
+{% include 'admin/partials/pagination.html' %}
+</div></div>
+{% endblock %}

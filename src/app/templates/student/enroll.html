@@ -1,0 +1,15 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Confirm Enrollment{% endblock %}
+{% block dashboard_content %}
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="card card-app"><div class="card-body">
+<h5 class="fw-semibold">{{ course.course_code }} — {{ course.course_name }}</h5>
+<p class="text-muted">Instructor: {{ course.teacher.full_name if course.teacher else 'TBA' }}</p>
+<p>{{ course.description or 'No description.' }}</p>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit" class="btn btn-primary">Confirm Enrollment</button>
+  <a href="{{ url_for('student.courses') }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+</div></div></div></div>
+{% endblock %}

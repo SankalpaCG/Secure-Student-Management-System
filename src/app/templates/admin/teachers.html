@@ -1,0 +1,25 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Teachers{% endblock %}
+{% block page_title %}Teacher Directory{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="get" class="row g-2"><div class="col-md-5"><input name="search" class="form-control" value="{{ search }}" placeholder="Search"></div>
+<div class="col-md-4"><input name="department" class="form-control" value="{{ department }}" placeholder="Department"></div>
+<div class="col-md-3"><button class="btn btn-primary w-100">Filter</button></div></form>
+</div></div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app table-hover mb-0">
+<thead><tr><th>Staff #</th><th>Name</th><th>Email</th><th>Department</th><th>Courses</th><th>Status</th><th></th></tr></thead>
+<tbody>
+{% for row in teachers %}{% set p = row.profile %}{% set u = p.user %}
+<tr>
+  <td>{{ p.staff_number }}</td><td><a href="{{ url_for('admin.teacher_profile', user_id=u.id) }}">{{ u.full_name }}</a></td>
+  <td>{{ u.email }}</td><td>{{ p.department or '—' }}</td><td>{{ row.course_count }}</td>
+  <td>{% if u.is_active %}<span class="badge badge-status-active">Active</span>{% else %}<span class="badge badge-status-inactive">Inactive</span>{% endif %}</td>
+  <td class="text-end"><a href="{{ url_for('admin.teacher_profile', user_id=u.id) }}" class="btn btn-sm btn-outline-secondary">Profile</a>
+  <a href="{{ url_for('admin.edit_user', user_id=u.id) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
+</tr>{% else %}<tr><td colspan="7" class="text-center py-4 text-muted">No teachers</td></tr>{% endfor %}
+</tbody></table>
+{% include 'admin/partials/pagination.html' %}
+</div></div>
+{% endblock %}

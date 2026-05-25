@@ -1,0 +1,22 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}My Attendance{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="card card-app"><div class="card-body text-center">
+    <div class="text-muted small">Overall Attendance</div>
+    <div class="fs-2 fw-bold text-primary">{% if overall_pct is not none %}{{ overall_pct }}%{% else %}—{% endif %}</div>
+  </div></div></div>
+  <div class="col-md-8"><div class="card card-app"><div class="card-header">Attendance by Course</div>
+    <div class="card-body"><canvas id="attCourseChart" height="100"></canvas></div></div></div>
+</div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Course</th><th>Date</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>{% for r in records %}
+<tr><td>{{ r.course.course_code }}</td><td>{{ r.attendance_date }}</td><td><span class="badge bg-secondary">{{ r.status.value }}</span></td><td>{{ r.remarks or '—' }}</td></tr>
+{% else %}<tr><td colspan="4" class="text-center py-4 text-muted">No attendance records</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}
+{% block extra_js %}<script>
+const cc={{ course_chart|tojson }};
+if(cc.length) new Chart(document.getElementById('attCourseChart'),{type:'bar',data:{labels:cc.map(c=>c.course),datasets:[{label:'%',data:cc.map(c=>c.pct),backgroundColor:'#16a34a'}]},options:{responsive:true,scales:{y:{min:0,max:100}}}});
+</script>{% endblock %}

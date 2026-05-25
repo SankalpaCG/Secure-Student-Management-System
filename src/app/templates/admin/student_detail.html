@@ -1,0 +1,14 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ user.full_name }}{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">
+<div class="col-md-4"><div class="card card-app"><div class="card-body">
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>Student #:</strong> {{ student_data.student_number if student_data else '—' }}</p>
+<p><strong>Courses:</strong> {{ course_count }}</p>
+<p><strong>Attendance:</strong> {% if attendance_pct is not none %}{{ attendance_pct }}%{% else %}—{% endif %}</p>
+</div></div></div>
+<div class="col-md-8"><div class="card card-app"><div class="card-header">Enrollments</div><div class="card-body">
+{% for e in enrollments %}<div class="border-bottom py-2">{{ e.course.course_code }} — {{ e.course.course_name }} ({{ e.status.value }})</div>{% else %}<p class="text-muted mb-0">No enrollments</p>{% endfor %}
+</div></div></div></div>
+{% endblock %}

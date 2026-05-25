@@ -1,0 +1,7 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ user.full_name }} — Grades{% endblock %}
+{% block dashboard_content %}<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Course</th><th>Assessment</th><th>Grade</th><th>Updated</th></tr></thead>
+<tbody>{% for g in grades %}<tr><td>{{ g.course.course_code }}</td><td>{{ g.assessment_name }}</td><td>{{ g.grade_value }}</td><td>{{ g.updated_at.strftime('%Y-%m-%d') if g.updated_at else '—' }}</td></tr>
+{% else %}<tr><td colspan="4" class="text-center py-4 text-muted">No grades</td></tr>{% endfor %}</tbody></table>
+</div></div>{% endblock %}

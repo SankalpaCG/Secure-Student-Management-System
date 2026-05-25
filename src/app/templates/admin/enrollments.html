@@ -1,0 +1,17 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Enrollment Management{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="get" class="row g-2">{{ filter_form.course_id(class='form-select col-md-4') }}{{ filter_form.student_id(class='form-select col-md-4') }}{{ filter_form.status(class='form-select col-md-3') }}<div class="col-md-1"><button class="btn btn-primary w-100">Go</button></div></form>
+</div></div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Student</th><th>Student #</th><th>Course</th><th>Status</th><th>Enrolled</th></tr></thead>
+<tbody>{% for e in enrollments %}<tr>
+<td>{{ e.student.full_name }}</td>
+<td>{{ e.student.student_profile.student_number if e.student.student_profile else '—' }}</td>
+<td>{{ e.course.course_code }}</td><td>{{ e.status.value }}</td>
+<td>{{ e.enrolled_at.strftime('%Y-%m-%d') if e.enrolled_at else '—' }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-center py-4 text-muted">No enrollments</td></tr>{% endfor %}</tbody></table>
+{% include 'admin/partials/pagination.html' %}
+</div></div>
+{% endblock %}

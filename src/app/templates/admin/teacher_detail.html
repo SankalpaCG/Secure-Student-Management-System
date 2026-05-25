@@ -1,0 +1,12 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ user.full_name }}{% endblock %}
+{% block page_actions %}<a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<dl class="row mb-0"><dt class="col-sm-2">Staff #</dt><dd class="col-sm-4">{{ profile.staff_number }}</dd>
+<dt class="col-sm-2">Department</dt><dd class="col-sm-4">{{ profile.department or '—' }}</dd></dl>
+</div></div>
+<div class="card card-app"><div class="card-header">Assigned Courses ({{ course_count }})</div><div class="card-body">
+{% for c in courses %}<div class="py-1">{{ c.course_code }} — {{ c.course_name }}</div>{% else %}<p class="text-muted mb-0">No courses assigned</p>{% endfor %}
+</div></div>
+{% endblock %}

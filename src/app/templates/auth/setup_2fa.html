@@ -1,0 +1,38 @@
+{% extends "auth_base.html" %}
+{% block title %}Set Up 2FA{% endblock %}
+{% block auth_content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center text-white mb-4">
+                <h1 class="h3 fw-bold">Secure Your Account</h1>
+                <p class="opacity-75">Two-factor authentication is required</p>
+            </div>
+            <div class="card login-card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    <div class="setup-steps mb-4">
+                        <span class="step-badge active">1. Scan QR</span>
+                        <span class="step-badge active">2. Verify</span>
+                    </div>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-5 text-center">
+                            <div class="qr-frame p-3 bg-white rounded-3 d-inline-block">
+                                <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="img-fluid qr-image">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label fw-medium">Manual entry key</label>
+                            <div class="secret-key-box p-3 rounded"><code class="user-select-all">{{ secret }}</code></div>
+                        </div>
+                    </div>
+                    <form method="POST">{{ form.hidden_tag() }}
+                        {{ form.token.label(class="form-label") }}
+                        {{ form.token(class="form-control form-control-lg text-center tracking-wide mb-3") }}
+                        {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

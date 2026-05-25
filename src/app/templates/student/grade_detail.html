@@ -1,0 +1,15 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Grade Detail{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app col-lg-7"><div class="card-body">
+<dl class="row mb-0">
+<dt class="col-sm-4">Course</dt><dd class="col-sm-8">{{ grade.course.course_code }} — {{ grade.course.course_name }}</dd>
+<dt class="col-sm-4">Assessment</dt><dd class="col-sm-8">{{ grade.assessment_name }}</dd>
+<dt class="col-sm-4">Grade</dt><dd class="col-sm-8 fs-4 fw-bold">{{ grade.grade_value }}</dd>
+<dt class="col-sm-4">Teacher</dt><dd class="col-sm-8">{{ grade.teacher.full_name }}</dd>
+<dt class="col-sm-4">Feedback</dt><dd class="col-sm-8">{{ grade.feedback or '—' }}</dd>
+<dt class="col-sm-4">Updated</dt><dd class="col-sm-8">{{ grade.updated_at.strftime('%Y-%m-%d %H:%M') if grade.updated_at else '—' }}</dd>
+</dl>
+<a href="{{ url_for('student.grades') }}" class="btn btn-outline-secondary mt-3">Back to Grades</a>
+</div></div>
+{% endblock %}

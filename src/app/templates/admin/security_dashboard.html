@@ -1,0 +1,212 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Security Dashboard{% endblock %}
+{% block page_title %}Security Operations Center{% endblock %}
+{% block page_subtitle %}
+<p class="page-subtitle mb-0">
+  Real-time security posture · Generated {{ generated_at.strftime('%Y-%m-%d %H:%M UTC') }}
+  <a href="{{ url_for('admin.audit_logs') }}" class="ms-2">Full audit logs</a>
+</p>
+{% endblock %}
+
+{% block dashboard_content %}
+<!-- Risk Score -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card card-app border-0 shadow-sm h-100 overflow-hidden">
+      <div class="card-body p-4 position-relative">
+        <div class="position-absolute top-0 end-0 opacity-10 pe-3 pt-2">
+          <i class="bi bi-shield-exclamation" style="font-size:4rem"></i>
+        </div>
+        <p class="text-muted small text-uppercase fw-semibold mb-1">Composite Risk Score</p>
+        <div class="d-flex align-items-end gap-2">
+          <span class="display-4 fw-bold text-{{ risk_score.variant }}">{{ risk_score.score }}</span>
+          <span class="text-muted mb-2">/ 100</span>
+        </div>
+        <span class="badge bg-{{ risk_score.variant }} fs-6 mt-2">{{ risk_score.level }} Risk</span>
+        <p class="small text-muted mt-3 mb-0">
+          Weighted from failed logins, 2FA failures, unauthorized access, and rate limits (24h).
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="row g-3 h-100">
+      {% for icon, label, value, variant in [
+        ('box-arrow-in-right', 'Failed Logins (24h)', failed_logins_24h, 'danger'),
+        ('shield-x', 'Failed 2FA (24h)', failed_2fa_24h, 'warning'),
+        ('slash-circle', 'Unauthorized (24h)', unauthorized_24h, 'danger'),
+        ('speedometer2', 'Rate Limits (24h)', rate_limit_24h, 'warning'),
+        ('exclamation-triangle', 'High Severity (24h)', high_severity_24h, 'danger'),
+        ('people', 'Active Users', active_users, 'success')] %}
+      <div class="col-md-4 col-6">
+        <div class="card card-app stat-card h-100 border-0 shadow-sm">
+          <div class="card-body d-flex align-items-center gap-3 py-3">
+            <div class="stat-icon bg-{{ variant }}-subtle text-{{ variant }}">
+              <i class="bi bi-{{ icon }}"></i>
+            </div>
+            <div>
+              <div class="stat-label small text-muted">{{ label }}</div>
+              <div class="stat-value fw-bold fs-5">{{ value }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="card card-app h-100">
+      <div class="card-header">Failed Login Trend (14 days)</div>
+      <div class="card-body"><canvas id="loginTrendChart" height="200"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-app h-100">
+      <div class="card-header">Events by Severity (7 days)</div>
+      <div class="card-body"><canvas id="severityChart" height="200"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-app h-100">
+      <div class="card-header">Top Attacked Routes (24h)</div>
+      <div class="card-body"><canvas id="endpointChart" height="200"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <!-- Suspicious IPs -->
+  <div class="col-lg-7">
+    <div class="card card-app h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-globe2 me-2"></i>Suspicious IP Addresses (24h)</span>
+        <span class="badge bg-secondary">{{ suspicious_ips|length }} tracked</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-app table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th class="text-center">Failed Login</th>
+                <th class="text-center">Failed 2FA</th>
+                <th class="text-center">Unauthorized</th>
+                <th>Last Seen</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for row in suspicious_ips %}
+            <tr>
+              <td class="font-monospace small">{{ row.ip_address }}</td>
+              <td class="text-center">{% if row.failed_login %}<span class="badge bg-danger-subtle text-danger">{{ row.failed_login }}</span>{% else %}—{% endif %}</td>
+              <td class="text-center">{% if row.failed_2fa %}<span class="badge bg-warning-subtle text-warning">{{ row.failed_2fa }}</span>{% else %}—{% endif %}</td>
+              <td class="text-center">{% if row.unauthorized %}<span class="badge bg-dark">{{ row.unauthorized }}</span>{% else %}—{% endif %}</td>
+              <td class="small text-nowrap">{{ row.last_seen.strftime('%m/%d %H:%M') if row.last_seen else '—' }}</td>
+              <td>
+                {% if row.risk_level == 'High' %}<span class="badge bg-danger">High</span>
+                {% elif row.risk_level == 'Medium' %}<span class="badge bg-warning text-dark">Medium</span>
+                {% else %}<span class="badge bg-success">Low</span>{% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No suspicious IP activity in the last 24 hours</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incident checklist -->
+  <div class="col-lg-5">
+    <div class="card card-app h-100 border-warning">
+      <div class="card-header bg-warning-subtle">
+        <i class="bi bi-clipboard-check me-2"></i>Incident Response Checklist
+      </div>
+      <div class="card-body">
+        <ol class="list-group list-group-numbered list-group-flush">
+          <li class="list-group-item border-0 px-0">Identify source IP from suspicious IP table or audit logs</li>
+          <li class="list-group-item border-0 px-0">Review account targeted (failed login / 2FA events)</li>
+          <li class="list-group-item border-0 px-0">
+            Temporarily deactivate account if compromise suspected
+            <a href="{{ url_for('admin.users') }}" class="small d-block">User management →</a>
+          </li>
+          <li class="list-group-item border-0 px-0">Reset 2FA for affected user if authenticator may be compromised</li>
+          <li class="list-group-item border-0 px-0">
+            <a href="{{ url_for('admin.audit_logs') }}">Review full audit trail</a> filtered by IP or severity
+          </li>
+          <li class="list-group-item border-0 px-0">Document incident: time, actions taken, outcome</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent high-risk events -->
+<div class="card card-app">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-lightning-charge me-2"></i>Recent High-Risk Events</span>
+    <a href="{{ url_for('admin.audit_logs', severity='HIGH') }}" class="btn btn-sm btn-outline-danger">View all HIGH+</a>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-app table-sm table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Time</th><th>User</th><th>Action</th><th>IP</th><th>Severity</th><th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for e in recent_high_risk %}
+        <tr>
+          <td class="text-nowrap small">{{ e.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td class="small">{{ e.user }}{% if e.user_email %}<br><span class="text-muted">{{ e.user_email }}</span>{% endif %}</td>
+          <td><code class="small">{{ e.action }}</code></td>
+          <td class="small font-monospace">{{ e.ip }}</td>
+          <td><span class="badge bg-{{ e.severity|severity_badge }}">{{ e.severity }}</span></td>
+          <td class="small text-truncate" style="max-width:220px" title="{{ e.details }}">{{ e.details }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No high-severity events in the last 48 hours</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const loginTrend = {{ login_trend|tojson }};
+new Chart(document.getElementById('loginTrendChart'), {
+  type: 'line',
+  data: {
+    labels: loginTrend.map(d => d.label),
+    datasets: [{ label: 'Failed logins', data: loginTrend.map(d => d.count), borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.1)', fill: true, tension: 0.3 }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+});
+
+const sev = {{ severity_chart|tojson }};
+const sevColors = sev.labels.map(l => (sev.colors && sev.colors[l]) || '#64748b');
+new Chart(document.getElementById('severityChart'), {
+  type: 'doughnut',
+  data: { labels: sev.labels, datasets: [{ data: sev.values, backgroundColor: sevColors }] },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+const ep = {{ endpoint_chart|tojson }};
+new Chart(document.getElementById('endpointChart'), {
+  type: 'bar',
+  data: { labels: ep.labels, datasets: [{ label: 'Events', data: ep.values, backgroundColor: '#6366f1' }] },
+  options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+});
+</script>
+{% endblock %}

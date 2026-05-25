@@ -1,0 +1,11 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Backup Codes{% endblock %}
+{% block dashboard_content %}
+<div class="alert alert-warning"><strong>Save these codes now.</strong> They will not be shown again.</div>
+<div class="card card-app col-lg-6"><div class="card-body">
+<div class="row g-2">{% for code in recovery_codes %}
+<div class="col-6"><code class="d-block p-2 bg-light rounded text-center">{{ code }}</code></div>
+{% endfor %}</div>
+<a href="{{ url_for('student.security_settings') }}" class="btn btn-primary mt-3">Done</a>
+</div></div>
+{% endblock %}

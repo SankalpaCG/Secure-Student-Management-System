@@ -1,0 +1,23 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Security Settings{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">
+<div class="col-lg-8">
+<div class="card card-app"><div class="card-body">
+<ul class="list-group list-group-flush mb-4">
+<li class="list-group-item d-flex justify-content-between align-items-center">
+  <span>Two-Factor Authentication</span>
+  {% if current_user.is_2fa_enabled %}<span class="badge badge-status-active">Enabled</span>{% else %}<span class="badge badge-status-inactive">Disabled</span>{% endif %}
+</li>
+<li class="list-group-item d-flex justify-content-between"><span>Unused Backup Codes</span><strong>{{ unused_codes }}</strong></li>
+</ul>
+<form method="post" class="mb-3" onsubmit="return confirm('This will invalidate existing backup codes. Continue?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="reset_backup_codes">
+  <button type="submit" class="btn btn-warning" {% if not current_user.is_2fa_enabled %}disabled{% endif %}><i class="bi bi-arrow-repeat me-1"></i>Reset Backup Codes</button>
+</form>
+<p class="text-muted small mb-0">Contact an administrator if you lose access to your authenticator app.</p>
+</div></div>
+</div>
+</div>
+{% endblock %}
