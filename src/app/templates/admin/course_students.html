@@ -1,0 +1,13 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Course Students{% endblock %}
+{% block page_title %}{{ course.course_code }} — Students{% endblock %}
+{% block page_actions %}<a href="{{ url_for('admin.courses') }}" class="btn btn-outline-secondary">Back</a>{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Student</th><th>Number</th><th>Status</th><th>Enrolled</th></tr></thead>
+<tbody>{% for e in enrollments %}
+<tr><td>{{ e.student.full_name }}</td><td>{{ e.student.student_profile.student_number if e.student.student_profile else '—' }}</td>
+<td>{{ e.status.value }}</td><td>{{ e.enrolled_at.strftime('%Y-%m-%d') if e.enrolled_at else '—' }}</td></tr>
+{% else %}<tr><td colspan="4" class="text-center py-4 text-muted">No enrollments</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Available Courses{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">
+{% for c in courses %}
+<div class="col-md-6 col-lg-4">
+  <div class="card card-app h-100"><div class="card-body d-flex flex-column">
+    <h5 class="fw-semibold">{{ c.course_code }}</h5>
+    <p class="mb-1">{{ c.course_name }}</p>
+    <p class="text-muted small mb-2">Instructor: {{ c.teacher.full_name if c.teacher else 'TBA' }}</p>
+    <p class="text-muted small flex-grow-1">{{ c.description or 'No description provided.' }}</p>
+    <a href="{{ url_for('student.enroll', course_id=c.id) }}" class="btn btn-primary btn-sm mt-2">Enroll</a>
+  </div></div>
+</div>
+{% else %}<div class="col-12"><div class="alert alert-info">No new courses available. You may already be enrolled in all active courses.</div></div></div>
+{% endfor %}
+</div>
+{% endblock %}

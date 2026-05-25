@@ -1,0 +1,64 @@
+{% extends "dashboard_base.html" %}
+{% block title %}{{ user.full_name }}{% endblock %}
+{% block page_title %}{{ user.full_name }}{% endblock %}
+{% block page_subtitle %}<p class="page-subtitle">{{ user.email }} · {{ user.role.value }}</p>{% endblock %}
+{% block page_actions %}
+<a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-primary">Edit</a>
+<a href="{{ url_for('admin.assign_role', user_id=user.id) }}" class="btn btn-outline-info">Assign Role</a>
+{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card card-app h-100">
+      <div class="card-header">Account</div>
+      <div class="card-body">
+        <dl class="row mb-0 small">
+          <dt class="col-5">Status</dt><dd class="col-7">{% if user.is_active %}<span class="badge badge-status-active">Active</span>{% else %}<span class="badge badge-status-inactive">Inactive</span>{% endif %}</dd>
+          <dt class="col-5">2FA</dt><dd class="col-7">{% if user.is_2fa_enabled %}<span class="badge bg-success">Enabled</span>{% else %}<span class="badge bg-secondary">Disabled</span>{% endif %}</dd>
+          <dt class="col-5">Created</dt><dd class="col-7">{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '—' }}</dd>
+        </dl>
+        {% if user.is_2fa_enabled %}
+        <form method="post" action="{{ url_for('admin.reset_2fa', user_id=user.id) }}" class="mt-3" onsubmit="return confirm('Reset 2FA for this user?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-warning w-100">Reset 2FA</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% if student_data %}
+  <div class="col-md-8">
+    <div class="card card-app">
+      <div class="card-header">Student Profile</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-3">Student #</dt><dd class="col-sm-9">{{ student_data.student_number }}</dd>
+          <dt class="col-sm-3">DOB</dt><dd class="col-sm-9">{{ student_data.date_of_birth or '—' }}</dd>
+          <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">{{ student_data.phone or '—' }}</dd>
+          <dt class="col-sm-3">Address</dt><dd class="col-sm-9">{{ student_data.address or '—' }}</dd>
+          <dt class="col-sm-3">Emergency</dt><dd class="col-sm-9">{{ student_data.emergency_contact or '—' }}</dd>
+        </dl>
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+          <a href="{{ url_for('admin.student_grades', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">Grades</a>
+          <a href="{{ url_for('admin.student_attendance', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">Attendance</a>
+          <a href="{{ url_for('admin.student_enrollments', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">Enrollments</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% elif teacher_profile %}
+  <div class="col-md-8">
+    <div class="card card-app">
+      <div class="card-header">Teacher Profile</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-3">Staff #</dt><dd class="col-sm-9">{{ teacher_profile.staff_number }}</dd>
+          <dt class="col-sm-3">Department</dt><dd class="col-sm-9">{{ teacher_profile.department or '—' }}</dd>
+          <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">{{ teacher_profile.phone or '—' }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

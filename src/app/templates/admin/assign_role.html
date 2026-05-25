@@ -1,0 +1,36 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Assign Role{% endblock %}
+{% block page_title %}Assign Role{% endblock %}
+{% block page_subtitle %}<p class="page-subtitle">{{ user.full_name }} ({{ user.email }})</p>{% endblock %}
+{% block dashboard_content %}
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="card card-app"><div class="card-body">
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label class="form-label">New Role</label>
+    <select name="role" class="form-select" id="roleSelect" required>
+      {% for r in roles %}<option value="{{ r.value }}" {% if user.role == r %}selected{% endif %}>{{ r.value }}</option>{% endfor %}
+    </select>
+  </div>
+  <div id="studentExtra" class="d-none">
+    <div class="mb-3"><label class="form-label">Student Number</label><input name="student_number" class="form-control" value="{{ user.student_profile.student_number if user.student_profile else '' }}"></div>
+  </div>
+  <div id="teacherExtra" class="d-none">
+    <div class="mb-3"><label class="form-label">Staff Number</label><input name="staff_number" class="form-control" value="{{ user.teacher_profile.staff_number if user.teacher_profile else '' }}"></div>
+    <div class="mb-3"><label class="form-label">Department</label><input name="department" class="form-control" value="{{ user.teacher_profile.department if user.teacher_profile else '' }}"></div>
+  </div>
+  <button type="submit" class="btn btn-primary">Assign Role</button>
+  <a href="{{ url_for('admin.view_user', user_id=user.id) }}" class="btn btn-outline-secondary">Cancel</a>
+</form>
+</div></div>
+</div></div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function toggle(){const r=document.getElementById('roleSelect').value;
+document.getElementById('studentExtra').classList.toggle('d-none',r!=='Student');
+document.getElementById('teacherExtra').classList.toggle('d-none',r!=='Teacher');}
+document.getElementById('roleSelect').addEventListener('change',toggle);toggle();
+</script>
+{% endblock %}

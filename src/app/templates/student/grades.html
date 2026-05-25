@@ -1,0 +1,21 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}My Grades{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-header">Grade Trend</div><div class="card-body"><canvas id="gradeChart" height="120"></canvas></div></div>
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app table-hover mb-0">
+<thead><tr><th>Course</th><th>Assessment</th><th>Grade</th><th>Feedback</th><th>Teacher</th></tr></thead>
+<tbody>{% for g in grades %}
+<tr>
+  <td>{{ g.course.course_code }}</td>
+  <td><a href="{{ url_for('student.grade_detail', grade_id=g.id) }}">{{ g.assessment_name }}</a></td>
+  <td class="fw-semibold">{{ g.grade_value }}</td>
+  <td class="small">{{ g.feedback or '—' }}</td>
+  <td>{{ g.teacher.full_name }}</td>
+</tr>{% else %}<tr><td colspan="5" class="text-center py-4 text-muted">No grades recorded yet</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}
+{% block extra_js %}<script>
+const trend={{ grade_trend|tojson }};
+if(trend.length) new Chart(document.getElementById('gradeChart'),{type:'line',data:{labels:trend.map(t=>t.label),datasets:[{data:trend.map(t=>t.value),borderColor:'#2563eb',tension:.3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}});
+</script>{% endblock %}

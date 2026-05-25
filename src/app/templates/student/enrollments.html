@@ -1,0 +1,16 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}My Enrollments{% endblock %}
+{% block page_actions %}<a href="{{ url_for('student.courses') }}" class="btn btn-primary">Browse Courses</a>{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app table-hover mb-0">
+<thead><tr><th>Course</th><th>Teacher</th><th>Enrolled</th><th>Status</th></tr></thead>
+<tbody>{% for e in enrollments %}
+<tr>
+  <td class="fw-medium">{{ e.course.course_code }} — {{ e.course.course_name }}</td>
+  <td>{{ e.course.teacher.full_name if e.course.teacher else '—' }}</td>
+  <td>{{ e.enrolled_at.strftime('%Y-%m-%d') if e.enrolled_at else '—' }}</td>
+  <td><span class="badge bg-secondary">{{ e.status.value }}</span></td>
+</tr>{% else %}<tr><td colspan="4" class="text-center py-4 text-muted">No enrollments. <a href="{{ url_for('student.courses') }}">Enroll in a course</a></td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

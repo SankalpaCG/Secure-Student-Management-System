@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Secure Student Management System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark public-navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+                <i class="bi bi-mortarboard-fill"></i>
+                Secure Student MS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="publicNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    {% if current_user.is_authenticated and is_2fa_verified %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for(dashboard_endpoint) }}">Dashboard</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        {% if current_user.is_authenticated and is_2fa_verified %}
+                            <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.logout') }}">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </a>
+                        {% else %}
+                            <a class="btn btn-outline-light btn-sm" href="{{ url_for('auth.login') }}">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                            </a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'components/flash_messages.html' %}
+
+    <main class="flex-grow-1 py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="public-footer py-4 mt-auto">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <span class="small fw-semibold"><i class="bi bi-mortarboard-fill text-primary me-1"></i>Secure Student Management System</span>
+                <span class="text-muted small">Flask · MySQL · 2FA · RBAC · Audit · JWT API</span>
+                <span class="text-muted small">&copy; {{ current_year }} · Distinction assessment build</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

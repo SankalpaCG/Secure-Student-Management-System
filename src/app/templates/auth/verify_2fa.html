@@ -1,0 +1,32 @@
+{% extends "auth_base.html" %}
+{% block title %}Verify 2FA{% endblock %}
+{% block auth_content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-5">
+            <div class="text-center text-white mb-4">
+                <div class="brand-icon mx-auto mb-3"><i class="bi bi-shield-lock fs-2"></i></div>
+                <h1 class="h3 fw-bold">Two-Factor Verification</h1>
+                <p class="opacity-75 mb-0">{{ user.email }}</p>
+            </div>
+            <div class="card login-card border-0 shadow-lg">
+                <div class="card-body p-4 p-md-5">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}{% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} py-2">{{ message }}</div>
+                        {% endfor %}{% endif %}
+                    {% endwith %}
+                    <form method="POST">{{ form.hidden_tag() }}
+                        <label class="form-label fw-medium">Authenticator code</label>
+                        {{ form.token(class="form-control form-control-lg text-center mb-3", placeholder="000000") }}
+                        <p class="text-center text-muted small">— or use a recovery code —</p>
+                        {{ form.recovery_code(class="form-control mb-3", placeholder="XXXX-XXXX") }}
+                        {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+                    </form>
+                    <p class="text-center mt-3 mb-0"><a href="{{ url_for('auth.logout') }}" class="small text-muted">Sign out</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="table-toolbar">
+    <div class="input-group table-search">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control"
+               placeholder="{{ search_placeholder | default('Search table...') }}"
+               data-table-search
+               data-table-target="{{ table_target | default('#dataTable') }}"
+               aria-label="Search table">
+    </div>
+    {% if actions is defined %}
+    <div class="table-actions d-flex flex-wrap gap-2">{{ actions }}</div>
+    {% endif %}
+</div>
