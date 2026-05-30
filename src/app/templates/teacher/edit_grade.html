@@ -1,0 +1,13 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Edit Grade{% endblock %}
+{% block page_subtitle %}<p class="page-subtitle">{{ course.course_code }} — {{ grade.assessment_name }} — {{ grade.student.full_name }}</p>{% endblock %}
+{% block dashboard_content %}
+<div class="row justify-content-center"><div class="col-lg-6">
+<div class="card card-app"><div class="card-body">
+<form method="post">{{ form.hidden_tag() }}
+  <div class="mb-3">{{ form.grade_value.label(class='form-label') }}{{ form.grade_value(class='form-control', step='0.1', min='0', max='100') }}</div>
+  <div class="mb-3">{{ form.feedback.label(class='form-label') }}{{ form.feedback(class='form-control', rows=3) }}</div>
+  {{ form.submit(class='btn btn-primary') }}
+  <a href="{{ url_for('teacher.course_students', course_id=course.id) }}" class="btn btn-outline-secondary">Cancel</a>
+</form></div></div></div></div>
+{% endblock %}

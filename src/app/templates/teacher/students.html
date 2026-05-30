@@ -1,0 +1,25 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ course.course_code }} — Students{% endblock %}
+{% block page_actions %}
+<a href="{{ url_for('teacher.mark_attendance', course_id=course.id) }}" class="btn btn-outline-secondary">Mark Attendance</a>
+<a href="{{ url_for('teacher.add_grade', course_id=course.id) }}" class="btn btn-primary">Add Grade</a>
+{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app"><div class="card-body p-0">
+<table class="table table-app table-hover mb-0">
+<thead><tr><th>Student #</th><th>Name</th><th>Email</th><th>Attendance</th><th>Avg Grade</th><th></th></tr></thead>
+<tbody>{% for row in students %}
+<tr>
+  <td>{{ row.student_number }}</td>
+  <td class="fw-medium">{{ row.student.full_name }}</td>
+  <td>{{ row.student.email }}</td>
+  <td>{% if row.attendance_pct is not none %}{{ row.attendance_pct }}%{% else %}—{% endif %}</td>
+  <td>{% if row.avg_grade is not none %}{{ row.avg_grade }}{% else %}—{% endif %}</td>
+  <td class="text-end text-nowrap">
+    <a href="{{ url_for('teacher.add_grade', course_id=course.id, student_id=row.student.id) }}" class="btn btn-sm btn-outline-primary">Add Grade</a>
+    <a href="{{ url_for('teacher.mark_attendance', course_id=course.id) }}" class="btn btn-sm btn-outline-secondary">Attendance</a>
+    <a href="{{ url_for('teacher.student_record', course_id=course.id, student_id=row.student.id) }}" class="btn btn-sm btn-outline-info">Record</a>
+  </td>
+</tr>{% else %}<tr><td colspan="6" class="text-center py-4 text-muted">No enrolled students</td></tr>{% endfor %}
+</tbody></table></div></div>
+{% endblock %}
