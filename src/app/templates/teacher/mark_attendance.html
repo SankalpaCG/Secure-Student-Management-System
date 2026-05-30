@@ -1,0 +1,43 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}Mark Attendance{% endblock %}
+{% block dashboard_content %}
+<div class="card card-app mb-3"><div class="card-body">
+<form method="post">{{ session_form.hidden_tag() }}
+<div class="row g-2 align-items-end">
+  <div class="col-md-5">{{ session_form.course_id.label(class='form-label') }}{{ session_form.course_id(class='form-select') }}</div>
+  <div class="col-md-4">{{ session_form.attendance_date.label(class='form-label') }}{{ session_form.attendance_date(class='form-control', type='date') }}</div>
+  <div class="col-md-3">{{ session_form.submit(class='btn btn-primary w-100') }}</div>
+</div></form></div></div>
+{% if course and students %}
+<div class="card card-app">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>{{ course.course_code }} — {{ grid_date.strftime('%Y-%m-%d') }}</span>
+    <span class="badge bg-secondary">{{ students|length }} students</span>
+  </div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="course_id" value="{{ course.id }}">
+    <input type="hidden" name="attendance_date" value="{{ grid_date.isoformat() }}">
+    <input type="hidden" name="save_grid" value="1">
+    <div class="card-body p-0 table-responsive">
+      <table class="table table-app mb-0">
+        <thead><tr><th>Student</th><th>Present</th><th>Absent</th><th>Late</th><th>Remarks</th></tr></thead>
+        <tbody>{% for row in students %}{% set s = row.student %}
+        <tr>
+          <td><div class="fw-medium">{{ s.full_name }}</div><small class="text-muted">{{ row.student_number }}</small></td>
+          {% for st in statuses %}
+          <td class="text-center"><input type="radio" name="status_{{ s.id }}" value="{{ st }}" {% if row.status==st %}checked{% endif %}></td>
+          {% endfor %}
+          <td><input type="text" name="remarks_{{ s.id }}" class="form-control form-control-sm" value="{{ row.remarks or '' }}"></td>
+        </tr>{% endfor %}</tbody>
+      </table>
+    </div>
+    <div class="card-footer d-flex gap-2">
+      <button type="submit" name="mark_all_present" value="1" class="btn btn-outline-success">Mark All Present</button>
+      <button type="submit" class="btn btn-primary">Save Attendance</button>
+      <a href="{{ url_for('teacher.attendance_history', course_id=course.id) }}" class="btn btn-outline-secondary ms-auto">View History</a>
+    </div>
+  </form>
+</div>
+{% elif course %}<div class="alert alert-info">No enrolled students for this course.</div>{% endif %}
+{% endblock %}

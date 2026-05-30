@@ -1,0 +1,90 @@
+.login-page {
+    background: linear-gradient(135deg, #0b1f3a 0%, #1a3a6b 45%, #0d6efd 100%);
+    min-height: 100vh;
+    position: relative;
+}
+
+.login-overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.04) 0%, transparent 35%);
+    pointer-events: none;
+}
+
+.login-brand .brand-icon {
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    font-size: 1.75rem;
+    backdrop-filter: blur(4px);
+}
+
+.login-card {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.login-card .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.error-page-icon {
+    font-size: 4rem;
+    color: #dc3545;
+}
+
+.dashboard-stat {
+    border-left: 4px solid #0d6efd;
+}
+
+.table-card {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.setup-steps {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.step-badge {
+    background: #e7f1ff;
+    color: #0d6efd;
+    padding: 0.35rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.step-badge.active {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.qr-frame {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+
+.qr-image {
+    max-width: 200px;
+}
+
+.secret-key-box {
+    background: #f8f9fa;
+    border: 1px dashed #ced4da;
+    word-break: break-all;
+}
+
+.tracking-wide {
+    letter-spacing: 0.35em;
+    font-weight: 600;
+}

@@ -1,0 +1,17 @@
+{% extends "dashboard_base.html" %}
+{% block page_title %}{{ student.full_name }} — Academic Record{% endblock %}
+{% block page_subtitle %}<p class="page-subtitle">{{ course.course_code }} — Avg {{ record.avg_grade or '—' }} · Attendance {{ record.attendance_pct or '—' }}%</p>{% endblock %}
+{% block dashboard_content %}
+<div class="row g-3">
+<div class="col-lg-6"><div class="card card-app"><div class="card-header">Grades</div><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Assessment</th><th>Grade</th><th></th></tr></thead>
+<tbody>{% for g in record.grades %}<tr><td>{{ g.assessment_name }}</td><td>{{ g.grade_value }}</td>
+<td><a href="{{ url_for('teacher.edit_grade', grade_id=g.id) }}" class="btn btn-sm btn-outline-primary">Edit</a></td></tr>
+{% else %}<tr><td colspan="3" class="text-center text-muted py-3">No grades</td></tr>{% endfor %}</tbody></table>
+</div></div>
+<div class="col-lg-6"><div class="card card-app"><div class="card-header">Attendance</div><div class="card-body p-0">
+<table class="table table-app mb-0"><thead><tr><th>Date</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>{% for a in record.attendance %}<tr><td>{{ a.attendance_date }}</td><td>{{ a.status.value }}</td><td>{{ a.remarks or '—' }}</td></tr>
+{% else %}<tr><td colspan="3" class="text-center text-muted py-3">No attendance</td></tr>{% endfor %}</tbody></table>
+</div></div></div>
+{% endblock %}
